@@ -7,11 +7,13 @@ defmodule TextClient.Interact do
   #   guessed:      ""
   # )
 
+  @hangman_server :hangman@CMMC02XT001JG5L
+
   # alias TextClient.State
   alias TextClient.{Player, State}
 
   def start() do
-    Hangman.new_game()
+    new_game()
     |> setup_state()
     # |> IO.inspect
     |> Player.play()
@@ -22,5 +24,13 @@ defmodule TextClient.Interact do
       game_service: game_service,
       tally:        Hangman.tally(game_service),
     }
+  end
+
+  defp new_game() do
+    Node.connect(@hangman_server)
+    :rpc.call(@hangman_server,
+      Hangman,
+      :new_game,
+      [])
   end
 end
